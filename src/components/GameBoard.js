@@ -1,88 +1,30 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import Square from './Square';
-import { GameContext } from '../providers/GameProvider';
-import deepClone from '../utils/deepClone';
-import constants from '../constants/constants';
+import MiniGameBoard from './MiniGameBoard';
+import GameProvider from '../providers/GameProvider';
 
-const BoardWrapper = styled.div`
-  height: 33%;
+const BigBoardWrapper = styled.div`
+  height: 100vh;
   display: flex;
   align-items: center;
-  flex: 0 0 33%;
-  border: 3px solid black;
-  cursor: pointer;
-  &:nth-child(-n + 3) {
-    border-top: none;
-  }
-  &:nth-child(n + 7) {
-    border-bottom: none;
-  }
-  &:nth-child(3n + 1) {
-    border-left: none;
-  }
-  &:nth-child(3n + 3) {
-    border-right: none;
-  }
-`;
-
-const Board = styled.div`
-  display: flex;
   flex-wrap: wrap;
-  height: 95%;
-  width: 95%;
+  max-width: 1400px;
   margin: 0 auto;
 `;
 
-const getNextPlayer = player => {
-  if (player === constants.PLAYER_ONE) {
-    return constants.PLAYER_TWO;
-  }
-  return constants.PLAYER_ONE;
-};
+const NUMBER_OF_GAME_BOARDS = 9;
 
-const GameBoard = props => {
-  const game = useContext(GameContext);
-  const { index } = props;
-  const [activeBoard, setActiveBoard] = useState(false);
-  const [gameSquares, setSquares] = useState(constants.STARTING_GAME_BOARD);
-
-  useEffect(() => {
-    if (game.activeGameBoard === index) {
-      return setActiveBoard(true);
-    }
-    setActiveBoard(false);
-  }, [index, game.activeGameBoard]);
-
-  const claimSquare = indexOfSquare => {
-    const updatedGameSquares = deepClone(gameSquares);
-    updatedGameSquares[indexOfSquare].ownedBy = game.player;
-    setSquares(updatedGameSquares);
+const GameBoard = () => {
+  const getGameBoards = numberOfBoards => {
+    return [...Array(numberOfBoards).keys()].map(index => (
+      <MiniGameBoard key={index} index={index} />
+    ));
   };
-
-  const handleSquareClick = indexOfSquare => () => {
-    claimSquare(indexOfSquare);
-    game.setActiveGameBoard(indexOfSquare);
-    game.setPlayer(getNextPlayer(game.player));
-  };
-
-  const getBoardSquares = squares =>
-    squares.map(square => {
-      return (
-        <Square
-          key={square.squareIndex}
-          squareIndex={square.squareIndex}
-          activeBoard={activeBoard}
-          handleSquareClick={handleSquareClick}
-          ownedBy={square.ownedBy}
-        />
-      );
-    });
 
   return (
-    <BoardWrapper>
-      <Board>{getBoardSquares(gameSquares)}</Board>
-    </BoardWrapper>
+    <GameProvider>
+      <BigBoardWrapper>{getGameBoards(NUMBER_OF_GAME_BOARDS)}</BigBoardWrapper>
+    </GameProvider>
   );
 };
 

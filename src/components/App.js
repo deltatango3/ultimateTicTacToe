@@ -1,8 +1,8 @@
 import React from 'react';
-import BigBoard from './BigBoard';
+import GameBoard from './GameBoard';
 
 const App = () => {
-  return <BigBoard />;
+  return <GameBoard />;
 };
 
 export default App;
