@@ -36,30 +36,29 @@ const Board = styled.div`
 
 const MiniGameBoard = props => {
   const game = useContext(GameContext);
-  const { index } = props;
+  const { squareIndex, ownedBy } = props.gameBoard;
   const [activeBoard, setActiveBoard] = useState(false);
   const [gameSquares, setSquares] = useState(constants.STARTING_GAME_BOARD);
-  const [gameWon, setGameWon] = useState(false);
   const { switchPlayer, player, startOfGame } = game;
 
   useEffect(() => {
-    if (gameWon) {
-      console.log('gameboard is won');
-    }
-  }, [gameWon]);
-
-  useEffect(() => {
-    if (game.activeGameBoard === index && gameWon === false) {
+    if (game.activeGameBoard === squareIndex && !ownedBy) {
       return setActiveBoard(true);
     }
-    setActiveBoard(false);
-  }, [index, game.activeGameBoard, gameWon]);
+    return setActiveBoard(false);
+  }, [squareIndex, game.activeGameBoard, ownedBy]);
+
+  const claimMiniBoard = player => {
+    const updatedBigGameSquares = deepClone(props.bigGameSquares);
+    updatedBigGameSquares[squareIndex].ownedBy = player;
+    props.setBigGameSquares(updatedBigGameSquares);
+  };
 
   const setGameBoardStatus = (gameSquares, currentPlayer) => {
     const match = owner => gameSquares[owner].ownedBy === currentPlayer;
     constants.winningMatches.forEach(winningMatch => {
       if (winningMatch.every(match)) {
-        setGameWon(true);
+        claimMiniBoard(currentPlayer);
       }
     });
   };
@@ -95,7 +94,8 @@ const MiniGameBoard = props => {
 
   return (
     <BoardWrapper>
-      <Board>{getBoardSquares(gameSquares)}</Board>
+      {ownedBy && <p>{ownedBy}</p>}
+      {!ownedBy && <Board>{getBoardSquares(gameSquares)}</Board>}
     </BoardWrapper>
   );
 };

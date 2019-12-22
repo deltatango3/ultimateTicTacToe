@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import MiniGameBoard from './MiniGameBoard';
 import GameProvider from '../providers/GameProvider';
+import constants from '../constants/constants';
 
 const BigBoardWrapper = styled.div`
   height: 100vh;
@@ -15,15 +16,36 @@ const BigBoardWrapper = styled.div`
 const NUMBER_OF_GAME_BOARDS = 9;
 
 const GameBoard = () => {
-  const getGameBoards = numberOfBoards => {
-    return [...Array(numberOfBoards).keys()].map(index => (
-      <MiniGameBoard key={index} index={index} />
-    ));
+  const [gameSquares, setSquares] = useState(constants.STARTING_GAME_BOARD);
+
+  console.log(gameSquares);
+
+  // const getGameBoards = numberOfBoards => {
+  //   return [...Array(numberOfBoards).keys()].map(index => (
+  //     <MiniGameBoard
+  //       key={index}
+  //       index={index}
+  //       bigGameSquares={gameSquares}
+  //       setBigGameSquares={setSquares}
+  //     />
+  //   ));
+  // };
+  const getGameBoards = gameBoards => {
+    return gameBoards.map((gameBoard, index) => {
+      return (
+        <MiniGameBoard
+          key={index}
+          gameBoard={gameBoard}
+          bigGameSquares={gameSquares}
+          setBigGameSquares={setSquares}
+        />
+      );
+    });
   };
 
   return (
     <GameProvider>
-      <BigBoardWrapper>{getGameBoards(NUMBER_OF_GAME_BOARDS)}</BigBoardWrapper>
+      <BigBoardWrapper>{getGameBoards(gameSquares)}</BigBoardWrapper>
     </GameProvider>
   );
 };
