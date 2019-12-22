@@ -13,28 +13,14 @@ const BigBoardWrapper = styled.div`
   margin: 0 auto;
 `;
 
-const NUMBER_OF_GAME_BOARDS = 9;
-
 const GameBoard = () => {
   const [gameSquares, setSquares] = useState(constants.STARTING_GAME_BOARD);
 
-  console.log(gameSquares);
-
-  // const getGameBoards = numberOfBoards => {
-  //   return [...Array(numberOfBoards).keys()].map(index => (
-  //     <MiniGameBoard
-  //       key={index}
-  //       index={index}
-  //       bigGameSquares={gameSquares}
-  //       setBigGameSquares={setSquares}
-  //     />
-  //   ));
-  // };
   const getGameBoards = gameBoards => {
-    return gameBoards.map((gameBoard, index) => {
+    return gameBoards.map(gameBoard => {
       return (
         <MiniGameBoard
-          key={index}
+          key={gameBoard.squareIndex}
           gameBoard={gameBoard}
           bigGameSquares={gameSquares}
           setBigGameSquares={setSquares}
