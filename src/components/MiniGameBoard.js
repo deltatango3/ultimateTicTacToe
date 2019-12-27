@@ -1,9 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, Fragment } from 'react';
 import styled from 'styled-components';
 import Square from './Square';
 import { GameContext } from '../providers/GameProvider';
 import deepClone from '../utils/deepClone';
 import constants from '../constants/constants';
+import xIcon from '../images/times-solid.svg';
+import circleIcon from '../images/circle-regular.svg';
 
 const BoardWrapper = styled.div`
   height: 33%;
@@ -11,6 +13,7 @@ const BoardWrapper = styled.div`
   align-items: center;
   flex: 0 0 33%;
   border: 3px solid black;
+  position: relative;
   cursor: pointer;
   &:nth-child(-n + 3) {
     border-top: none;
@@ -32,6 +35,26 @@ const Board = styled.div`
   height: 95%;
   width: 95%;
   margin: 0 auto;
+  z-index: 1;
+`;
+
+const OwnerIconContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: initial;
+`;
+
+const OwnerIcon = styled.img`
+  height: 80%;
+  width: 80%;
 `;
 
 const MiniGameBoard = props => {
@@ -40,6 +63,7 @@ const MiniGameBoard = props => {
   const [activeBoard, setActiveBoard] = useState(false);
   const [gameSquares, setSquares] = useState(constants.STARTING_GAME_BOARD);
   const { switchPlayer, player, startOfGame } = game;
+  const gameOwnerIcon = ownedBy === constants.PLAYER_ONE ? xIcon : circleIcon;
 
   useEffect(() => {
     if (game.activeGameBoard === squareIndex && !ownedBy) {
@@ -94,8 +118,12 @@ const MiniGameBoard = props => {
 
   return (
     <BoardWrapper>
-      {ownedBy && <p>{ownedBy}</p>}
-      {!ownedBy && <Board>{getBoardSquares(gameSquares)}</Board>}
+      {ownedBy && (
+        <OwnerIconContainer>
+          <OwnerIcon src={gameOwnerIcon} />
+        </OwnerIconContainer>
+      )}
+      <Board>{getBoardSquares(gameSquares)}</Board>
     </BoardWrapper>
   );
 };
